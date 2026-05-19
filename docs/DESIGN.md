@@ -108,6 +108,7 @@ Here are the results:
 
 - enhance the prompt, provide additional detail, maybe an example or two
 - Integrate a search tool to ground the models
+- use thinking tokens
 - Use mult-tiered structured output so that we can try to get consistent results
 
 
@@ -154,3 +155,20 @@ Here are the results of our second run (gemini-baseline-560b3c52) compared to th
    - While Actionability jumped to **3.80**, the judge noted that the model is still listing *high-level objectives* (e.g. "Explore the surface of Mars") rather than describing the *interactive elements, scenarios, or tour steps* needed by AR/VR developers.
    - For instruction following (**4.10**), the judge pointed out that the model occasionally defaults to placeholders (e.g. "Identify famous astronauts") instead of listing the *actual names* (Chris Hadfield, Peggy Whitson) requested by the user prompt.
 
+
+### Results for Iteration 2 (System Prompt + Thinking ON)
+
+Here are the results of our third run (gemini-baseline-ef9d4c3f) with thinking tokens enabled:
+- **Clarity & Structure**: 5.00 / 5.0 (**+0.10** from Iteration 1)
+- **Tone & Grade-Level Appropriateness**: 5.00 / 5.0 (**+0.30** from Iteration 1)
+- **Factuality & Groundedness**: 5.00 / 5.0 (Perfect score maintained)
+- **Actionability & Completeness**: 4.40 / 5.0 (**+0.60** from Iteration 1)
+- **Instruction Following**: 4.40 / 5.0 (**+0.30** from Iteration 1)
+
+#### Key Observations
+1. **Perfect Clarity, Structure, and Tone**: Enabling thinking tokens (reasoning) allowed the model to plan its vocabulary, sentence structures, and formatting before drafting. This yielded a perfect **5.00** for Clarity, Structure, and Tone & Grade-Level Appropriateness.
+2. **Substantial Actionability Boost**: Actionability jumped from 3.80 to **4.40**. By thinking before generating, the model was able to draft significantly richer and more specific educational steps (e.g. for the Mars 3rd Grade Tour, it compared Mars to Earth on specific metrics: seasons, poles, temperature, gravity, oceans).
+3. **Instruction Following Boost**: Instruction Following rose to **4.40** (up from 4.10).
+4. **Remaining Gaps**:
+   - The judge still noted that for highly specific prompts (like a Mars "interactive tour"), the model is still outputting high-level learning objectives rather than detailing *interactive scenes, simulation setups, or physical interactions* that an AR/VR developer can directly implement.
+   - For historical prompts (like ISS history), it still occasionally misses listing specific individual names of historical figures (famous astronauts) in favor of high-level bullet points.

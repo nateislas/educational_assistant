@@ -15,12 +15,14 @@ class EducationalPlan(BaseModel):
 GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
 MODEL_TEMPERATURE = float(os.getenv("MODEL_TEMPERATURE", "0.1"))
 MODEL_MAX_TOKENS = int(os.getenv("MODEL_MAX_TOKENS", "1000"))
+GEMINI_THINKING_BUDGET = int(os.getenv("GEMINI_THINKING_BUDGET", "1024"))
 
 # Initialize the Gemini LLM
 model = ChatGoogleGenerativeAI(
     model=GEMINI_MODEL_NAME,
     temperature=MODEL_TEMPERATURE,
     max_tokens=MODEL_MAX_TOKENS,
+    thinking_budget=GEMINI_THINKING_BUDGET,
 )
 
 # 3. Bind structured output
