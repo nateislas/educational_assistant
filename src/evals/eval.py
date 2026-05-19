@@ -23,13 +23,13 @@ judge_model = ChatGoogleGenerativeAI(
 )
 
 # Define the LLM-as-a-Judge prompt that grades based on our rubrics
-JUDGE_SYSTEM_PROMPT = """You are an expert educational curriculum evaluator specializing in K-12 Aerospace and Space sciences. 
+JUDGE_SYSTEM_PROMPT = """You are an expert educational curriculum evaluator specializing in K-12 education. 
 Your task is to grade the generated "Educational Plan" against the given "User Prompt".
 
 You must grade the educational plan on a 1-5 scale (where 1 is poor and 5 is excellent) across these five dimensions:
 1. clarity_and_structure (logical organization, distinct sections, clear step-by-step progression of concepts)
 2. tone_and_grade_appropriateness (engaging, educational, K-12 student-friendly)
-3. factuality_and_groundedness (factual accuracy, no scientific or historical hallucinations, aligns with real-world aerospace principles)
+3. factuality_and_groundedness (factual accuracy, no scientific or historical hallucinations, aligns with real-world facts and principles)
 4. actionability_and_completeness (covers core concepts thoroughly, provides concrete details that can be visualized or interacted with in a training module)
 5. instruction_following (did the generated plan strictly adhere to all constraints, topics, and requirements specified in the user prompt?)
 
@@ -124,29 +124,34 @@ Please evaluate the generated plan based on the criteria. Output your evaluation
 
 def main():
     client = Client()
-    dataset_name = "educational-assistant-baseline"
+    
+    # Allow dynamic configuration via environment variables
+    queries_file = os.getenv("EVAL_QUERIES_FILE", "test_queries.json")
+    dataset_name = os.getenv("EVAL_DATASET_NAME", "educational-assistant-baseline")
 
     # Bootstrapping dataset if missing
     if not client.has_dataset(dataset_name=dataset_name):
-        print(f"Creating baseline dataset '{dataset_name}' in LangSmith...")
+        print(f"Creating dataset '{dataset_name}' in LangSmith...")
         dataset = client.create_dataset(
             dataset_name=dataset_name,
-            description="Baseline evaluations for K-12 Aerospace and Space Science educational experience prompts.",
+            description="Evaluations for K-12 educational experience prompts.",
         )
 
-        # Load the 10 static K-12 aerospace/space queries from test_queries.json
-        queries_path = os.path.join(os.path.dirname(__file__), "test_queries.json")
+        # Load static queries from JSON
+        queries_path = os.path.join(os.path.dirname(__file__), queries_file)
         try:
             with open(queries_path, "r") as f:
                 seed_cases = json.load(f)
             
             for case in seed_cases:
+                prompt_val = case.get("prompt") or case.get("input")
+                ref_val = case.get("expected_output") or case.get("response")
                 client.create_example(
-                    inputs={"prompt": case["prompt"]},
-                    outputs=None,
+                    inputs={"prompt": prompt_val},
+                    outputs={"response": ref_val} if ref_val else None,
                     dataset_id=dataset.id,
                 )
-            print(f"Dataset seeded successfully with {len(seed_cases)} K-12 aerospace/space queries!")
+            print(f"Dataset seeded successfully with {len(seed_cases)} K-12 educational queries from {queries_file}!")
         except Exception as e:
             print(f"Error loading or seeding static queries: {e}")
             exit(1)

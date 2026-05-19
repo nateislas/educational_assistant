@@ -105,14 +105,14 @@ if __name__ == "__main__":
     else:
         # If no arguments, launch a friendly interactive console
         print("==============================================================")
-        print(f"🚀 K-12 Aerospace Agent Console (Model: {GEMINI_MODEL_NAME})")
+        print(f"🚀 K-12 Educational Agent Console (Model: {GEMINI_MODEL_NAME})")
         print("   All prompts are fully traced & uploaded to LangSmith.")
         print("   Type 'exit' or 'quit' to close the console.")
         print("==============================================================")
         
         while True:
             try:
-                prompt = input("\nEnter your aerospace/space query: ").strip()
+                prompt = input("\nEnter your educational query: ").strip()
                 if not prompt:
                     continue
                 if prompt.lower() in ("exit", "quit"):
