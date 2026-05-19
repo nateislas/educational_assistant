@@ -62,8 +62,44 @@ Questions so far:
 I'm planning on using a higher tier model (probably gemini 3.1 flash lite) as the LLM judge.
 
 
-## Getting started
+## Evals
 
-Before making any improvements to the prompt, I created an eval pipeline. We are going to judge the LLM responses on criteria include:
+Before making any improvements to the prompt, I created an eval pipeline. I think this gives us a good starting point to measure LLM response quality.
 
-I think this gives us a good starting point to measure LLM response quality. 
+### Criteria/Rubric
+
+We are going to judge the LLM responses on a 1-5 scale (where 1 is poor and 5 is excellent) across these five dimensions:
+- **`clarity_and_structure`**: Logical organization, distinct sections, clear step-by-step progression of concepts.
+- **`tone_and_grade_appropriateness`**: Engaging, educational, and K-12 student-friendly tone.
+- **`factuality_and_groundedness`**: Factual accuracy, no scientific or historical hallucinations, aligns with real-world aerospace principles.
+- **`actionability_and_completeness`**: Covers core concepts thoroughly, provides concrete details that can be visualized or interacted with in a training module.
+- **`instruction_following`**: Adherence to all constraints, topics, and requirements specified in the user prompt.
+
+### Test Queries
+
+I tested the initial prompt on these queries:
+1. "Teach about the history of the International Space Station including important dates, famous astronauts, and interesting events." (Exact query from assignment)
+2. "Create an interactive solar system tour for 3rd graders focusing on Mars."
+3. "Create a flight simulator experience for 7th graders teaching the Wright Brothers' first successful flight."
+4. "Explain the James Webb Space Telescope (JWST) for 11th graders."
+5. "Explain photosynthesis for 5th graders."
+6. "A tour of the ancient Roman Colosseum for 6th graders."
+7. "Explain how volcanoes erupt for 4th graders."
+8. "Introduction to fractions for 2nd graders."
+9. "The water cycle" (Vague, no grade specified)
+10. "Shakespeare" (Extremely vague, off-domain edge case)
+
+### Initial Result with Original Prompt
+
+Here are the results:
+- **Clarity & Structure**: 3.20 / 5.0
+- **Tone & Grade-Level Appropriateness**: 4.20 / 5.0
+- **Factuality & Groundedness**: 4.60 / 5.0
+- **Actionability & Completeness**: 2.30 / 5.0
+- **Instruction Following**: 2.80 / 5.0
+
+#### Key Observations
+- **Highly Accurate, Good Tone**: The model is accurate (4.6) and matches the grade level naturally when one is specified (4.2). 
+- **Lacks Actionability**: The model scores very low on actionability and completeness (2.3) because it reads like a textbook summary rather than a plan that provides concrete, buildable details that an AR/VR developer can visualize or turn into interactions.
+- **Instruction Following Gaps**: The model scores low on instruction following (2.8) because it struggles to strictly adhere to all constraints, especially on vague or off-domain prompts where it outputs general summaries instead of structured learning experiences.
+

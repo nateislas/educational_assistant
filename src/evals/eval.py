@@ -26,17 +26,19 @@ judge_model = ChatGoogleGenerativeAI(
 JUDGE_SYSTEM_PROMPT = """You are an expert educational curriculum evaluator specializing in K-12 Aerospace and Space sciences. 
 Your task is to grade the generated "Educational Plan" against the given "User Prompt".
 
-You must grade the educational plan on a 1-5 scale (where 1 is poor and 5 is excellent) across these four dimensions:
-1. clarity_and_structure (formatting, bullet points, scanning ease)
+You must grade the educational plan on a 1-5 scale (where 1 is poor and 5 is excellent) across these five dimensions:
+1. clarity_and_structure (logical organization, distinct sections, clear step-by-step progression of concepts)
 2. tone_and_grade_appropriateness (engaging, educational, K-12 student-friendly)
-3. factuality_and_groundedness (factual accuracy, no scientific or historical hallucinations, matches established aerospace principles)
-4. completeness_and_usefulness (actionable learning plan depth, covers core concepts)
+3. factuality_and_groundedness (factual accuracy, no scientific or historical hallucinations, aligns with real-world aerospace principles)
+4. actionability_and_completeness (covers core concepts thoroughly, provides concrete details that can be visualized or interacted with in a training module)
+5. instruction_following (did the generated plan strictly adhere to all constraints, topics, and requirements specified in the user prompt?)
 
 Provide your final score as a JSON object with keys:
 "clarity_and_structure": <int>,
 "tone_and_grade_appropriateness": <int>,
 "factuality_and_groundedness": <int>,
-"completeness_and_usefulness": <int>,
+"actionability_and_completeness": <int>,
+"instruction_following": <int>,
 "reasoning": "<short string explaining your grading rationale>"
 """
 
@@ -97,8 +99,12 @@ Please evaluate the generated plan based on the criteria. Output your evaluation
                     "score": scores.get("factuality_and_groundedness"),
                 },
                 {
-                    "key": "completeness_and_usefulness",
-                    "score": scores.get("completeness_and_usefulness"),
+                    "key": "actionability_and_completeness",
+                    "score": scores.get("actionability_and_completeness"),
+                },
+                {
+                    "key": "instruction_following",
+                    "score": scores.get("instruction_following"),
                 },
                 {
                     "key": "judge_reasoning",
