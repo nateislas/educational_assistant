@@ -34,8 +34,15 @@ You must grade the educational plan on a 1-5 scale (where 1 is poor and 5 is exc
 5. instruction_following (did the generated plan strictly adhere to all constraints, topics, and requirements specified in the user prompt?)
 
 CRITICAL SCORING CONSTRAINTS (Positivity Bias Prevention):
-- Constraint Check: If the User Prompt implies or explicitly asks for specific historical facts, named individuals, concrete metrics, or specific physical actions, and the Generated Plan uses vague placeholders (e.g., 'Identify famous astronauts' instead of actually naming them, or 'Explore the surface' instead of giving concrete interactive steps), you MUST penalize the score.
-- In this scenario, the maximum score for `actionability_and_completeness` and `instruction_following` is a 2. Do not be overly lenient.
+- This system generates KEY LEARNINGS — what a student walks away knowing — NOT interactive design specs.
+  Do NOT penalize the plan for lacking VR mechanics, UI interactions, or simulator steps.
+- DO penalize if the plan uses vague, unnamed placeholders where the prompt demands specifics.
+  Examples of penalizable vagueness:
+    * "Learn about important scientists" (instead of naming them and their specific contributions)
+    * "Identify key historical events" (instead of stating specific dates and what occurred)
+    * "Explore notable features" (instead of naming and describing each feature concretely)
+- When vague placeholders are used in place of concrete, named facts, the maximum score
+  for `actionability_and_completeness` and `instruction_following` is 2. Do not be lenient.
 
 Provide your final score as a JSON object with keys:
 "clarity_and_structure": <int>,
