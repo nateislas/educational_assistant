@@ -139,36 +139,28 @@ Quality requirements:
 - All facts, figures, and explanations must be accurate. Never fabricate specifics.
 - Apply this structure to any topic, not just science or aerospace."
 
-### Results for Iteration 1 (System Prompt Only)
+### Iteration 1: Upgraded System Prompt
+We updated the system prompt to enforce a strict nested bullet-point structure.
+- **Clarity & Structure:** 3.20 ➔ 4.90
+- **Factuality:** 4.60 ➔ 5.00
+- **Actionability:** 2.30 ➔ 3.80
 
-Here are the results of our second run (gemini-baseline-560b3c52) compared to the initial baseline:
-- **Clarity & Structure**: 4.90 / 5.0 (**+1.70**)
-- **Tone & Grade-Level Appropriateness**: 4.70 / 5.0 (**+0.50**)
-- **Factuality & Groundedness**: 5.00 / 5.0 (**+0.40**)
-- **Actionability & Completeness**: 3.80 / 5.0 (**+1.50**)
-- **Instruction Following**: 4.10 / 5.0 (**+1.30**)
+**Takeaway:** Formatting improved dramatically, but the model still outputs generic objectives (e.g., "Explore Mars") instead of concrete, buildable facts or interactive AR/VR steps.
 
-#### Key Observations
-1. **Dramatic Improvements**: Forcing the strict bullet-point structure and nested requirements immediately resolved our structure issue, raising Clarity from a mediocre 3.20 to a near-perfect **4.90**.
-2. **Factuality Gains**: The quality instruction reminding the model to ground everything securely and never fabricate details yielded a perfect **5.00** for factuality.
-3. **Actionability and Instruction Following (Remaining Gaps)**:
-   - While Actionability jumped to **3.80**, the judge noted that the model is still listing *high-level objectives* (e.g. "Explore the surface of Mars") rather than describing the *interactive elements, scenarios, or tour steps* needed by AR/VR developers.
-   - For instruction following (**4.10**), the judge pointed out that the model occasionally defaults to placeholders (e.g. "Identify famous astronauts") instead of listing the *actual names* (Chris Hadfield, Peggy Whitson) requested by the user prompt.
+### Iteration 2: Enabling Reasoning (Thinking Tokens)
+We allocated a `1024` token thinking budget (`GEMINI_THINKING_BUDGET`) so the model plans before it writes.
+- **Actionability:** 3.80 ➔ 4.40
+- **Instruction Following:** 4.10 ➔ 4.40
 
+**Takeaway:** The model uses the scratchpad to plan richer details (e.g., explicitly comparing Mars to Earth by gravity, seasons, and oceans). However, it still fails to name specific astronauts or exact dates when specifically requested.
 
-### Results for Iteration 2 (System Prompt + Thinking ON)
+### Iteration 3: Fixing LLM Judge Positivity Bias
+When comparing our Iteration 2 output against the assignment's "golden" reference answer, we noticed a critical evaluation flaw: our LLM judge was suffering from **positivity bias**. It scored the output a 4/5 for Instruction Following, even though the generated plan completely missed requested historical dates (like 2011) and named zero astronauts.
 
-Here are the results of our third run (gemini-baseline-ef9d4c3f) with thinking tokens enabled:
-- **Clarity & Structure**: 5.00 / 5.0 (**+0.10** from Iteration 1)
-- **Tone & Grade-Level Appropriateness**: 5.00 / 5.0 (**+0.30** from Iteration 1)
-- **Factuality & Groundedness**: 5.00 / 5.0 (Perfect score maintained)
-- **Actionability & Completeness**: 4.40 / 5.0 (**+0.60** from Iteration 1)
-- **Instruction Following**: 4.40 / 5.0 (**+0.30** from Iteration 1)
+To fix this, we added **strict negative constraints** to the judge's prompt (`eval.py`). The judge is now instructed to cap scores at a maximum of `2` if the model uses vague placeholders instead of actual facts.
 
-#### Key Observations
-1. **Perfect Clarity, Structure, and Tone**: Enabling thinking tokens (reasoning) allowed the model to plan its vocabulary, sentence structures, and formatting before drafting. This yielded a perfect **5.00** for Clarity, Structure, and Tone & Grade-Level Appropriateness.
-2. **Substantial Actionability Boost**: Actionability jumped from 3.80 to **4.40**. By thinking before generating, the model was able to draft significantly richer and more specific educational steps (e.g. for the Mars 3rd Grade Tour, it compared Mars to Earth on specific metrics: seasons, poles, temperature, gravity, oceans).
-3. **Instruction Following Boost**: Instruction Following rose to **4.40** (up from 4.10).
-4. **Remaining Gaps**:
-   - The judge still noted that for highly specific prompts (like a Mars "interactive tour"), the model is still outputting high-level learning objectives rather than detailing *interactive scenes, simulation setups, or physical interactions* that an AR/VR developer can directly implement.
-   - For historical prompts (like ISS history), it still occasionally misses listing specific individual names of historical figures (famous astronauts) in favor of high-level bullet points.
+**Calibrated Results (`gemini-baseline-afd8999f`):**
+- **Actionability:** 4.40 ➔ 2.70
+- **Instruction Following:** 4.40 ➔ 2.90
+
+**Takeaway:** The plunge in scores is actually a massive success. Our evaluation pipeline is now strictly calibrated. We have identified the model's true baseline: excellent formatting and tone, but severe gaps in extracting concrete facts and designing interactive steps.
