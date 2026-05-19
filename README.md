@@ -1,4 +1,4 @@
-# K-12 Educational Plan Generator & Evaluation Pipeline
+# Improving AI Output Quality
 
 A system to generate structured, grounded, K-12 educational plans for AR/VR/MR learning modules.
 
