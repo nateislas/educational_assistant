@@ -103,3 +103,54 @@ Here are the results:
 - **Lacks Actionability**: The model scores very low on actionability and completeness (2.3) because it reads like a textbook summary rather than a plan that provides concrete, buildable details that an AR/VR developer can visualize or turn into interactions.
 - **Instruction Following Gaps**: The model scores low on instruction following (2.8) because it struggles to strictly adhere to all constraints, especially on vague or off-domain prompts where it outputs general summaries instead of structured learning experiences.
 
+
+## Enhancements
+
+- enhance the prompt, provide additional detail, maybe an example or two
+- Integrate a search tool to ground the models
+- Use mult-tiered structured output so that we can try to get consistent results
+
+
+### Improving system prompt ONLY
+
+
+The old prompt only asked for a "concise summary" which resulted in unstructured paragraphs, but the new prompt forces a strict, nested bullet-point structure to guarantee consistent formatting. It also adds clear guidelines for grade-level adaptation and off-domain fallbacks, making sure the model handles any user query without breaking.
+
+"Role:
+"You are an expert curriculum designer. You create structured learning plans 
+for immersive AR/VR/MR educational experiences for K-12 students."
+
+Task:
+"Given a topic or description of an educational experience, generate a 
+detailed set of Key Learnings the student should walk away with."
+
+Format rules:
+- Always begin with the header "Key Learnings:"
+- List 4 to 7 top-level learning objectives. Each should begin with an action 
+  verb (Understand, Learn, Identify, Recognize, Explore, Appreciate).
+- Under each objective, add 2 to 4 nested bullet points that provide concrete 
+  supporting detail.
+- Do not write paragraphs or flowing prose.
+- Adjust vocabulary and complexity to the target grade level. If no grade 
+  level is specified, target a 6th to 8th grade audience.
+
+Quality requirements:
+- All facts, figures, and explanations must be accurate. Never fabricate specifics.
+- Apply this structure to any topic, not just science or aerospace."
+
+### Results for Iteration 1 (System Prompt Only)
+
+Here are the results of our second run (gemini-baseline-560b3c52) compared to the initial baseline:
+- **Clarity & Structure**: 4.90 / 5.0 (**+1.70**)
+- **Tone & Grade-Level Appropriateness**: 4.70 / 5.0 (**+0.50**)
+- **Factuality & Groundedness**: 5.00 / 5.0 (**+0.40**)
+- **Actionability & Completeness**: 3.80 / 5.0 (**+1.50**)
+- **Instruction Following**: 4.10 / 5.0 (**+1.30**)
+
+#### Key Observations
+1. **Dramatic Improvements**: Forcing the strict bullet-point structure and nested requirements immediately resolved our structure issue, raising Clarity from a mediocre 3.20 to a near-perfect **4.90**.
+2. **Factuality Gains**: The quality instruction reminding the model to ground everything securely and never fabricate details yielded a perfect **5.00** for factuality.
+3. **Actionability and Instruction Following (Remaining Gaps)**:
+   - While Actionability jumped to **3.80**, the judge noted that the model is still listing *high-level objectives* (e.g. "Explore the surface of Mars") rather than describing the *interactive elements, scenarios, or tour steps* needed by AR/VR developers.
+   - For instruction following (**4.10**), the judge pointed out that the model occasionally defaults to placeholders (e.g. "Identify famous astronauts") instead of listing the *actual names* (Chris Hadfield, Peggy Whitson) requested by the user prompt.
+
